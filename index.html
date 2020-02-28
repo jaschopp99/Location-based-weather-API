@@ -18,7 +18,7 @@
     <body>
         <div id="app">
             <div class="container">
-                <p> You're located in {{}}</p>
+                <p> You're located in {{locationState}}</p>
                 <p id="ip"></p>
             </div>
         </div>
@@ -30,9 +30,13 @@
             var vm = new Vue({
                 el: '#app',
                 data: {
-                        imgSrc:'',
-                        imgTitle:''
+                        location: [],
                     },
+                locationState: {
+                    locationState: function () {
+                        return this.region_code;
+                    }
+                },
                     created: function() {
                         this.fetchApod();
                     },
@@ -40,10 +44,12 @@
                         fetchApod: function() {
                             var apiKey="72819806ac30a8d25d7833ae541987fa";
                             var url="http://api.ipstack.com/"+ apiKey;
+                            //https://ipstack.com/documentation
                             axios.get(url)
                             .then( function(res) {
                                 console.clear();
                                 console.log(res);
+                                vm.location = res.data;
                             });
 
                         }
