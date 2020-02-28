@@ -1,22 +1,57 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="myQuiz">
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta http-equiv="Content-Type" content="text/html:charset=UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title></title>
-        <link rel="stylesheet" type="text/css" href="./css/styles.css">
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <title></title>      
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">  
         <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-        <script src="js/main.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <script src= "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> 
+        <style>
+            [v-cloak] {
+                display: none;
+            }
+        </style>
     </head>
     <body>
-        <!--https://world.openfoodfacts.org/api/v0/product/737628064502.json-->
-        <!--https://world.openfoodfacts.org/data-->
+        <div id="app">
+            <div class="container">
+                <p> You're located in {{}}</p>
+                <p id="ip"></p>
+            </div>
+        </div>
+        
+        <script>
+            $.getJSON("https://api.ipify.org?format=json",function(data) { 
+            $("#ip").html(data.ip); 
+        }) 
+            var vm = new Vue({
+                el: '#app',
+                data: {
+                        imgSrc:'',
+                        imgTitle:''
+                    },
+                    created: function() {
+                        this.fetchApod();
+                    },
+                    methods: {
+                        fetchApod: function() {
+                            var apiKey="72819806ac30a8d25d7833ae541987fa";
+                            var url="http://api.ipstack.com/"+ apiKey;
+                            axios.get(url)
+                            .then( function(res) {
+                                console.clear();
+                                console.log(res);
+                            });
 
-        <script>         
-            
+                        }
+                    }
+                });
+                vm.fetchApod();
         </script>
     </body>
+
+
 </html>
