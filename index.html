@@ -21,7 +21,7 @@
                 <p> You're located in {{ city }}, {{ state }}</p>
                 <p>Your zip code is {{ zip }}</p>
                 <p>The temperature is {{ temp }} °F</p>
-                <p>The weather description - {{ description }}</p>
+                <p>The weather description - {{ description }} <br>for {{ time }}</p>
                 <p id="ip"></p>
             </div>
         </div>
@@ -33,7 +33,8 @@
                         zip: '1',
                         state: '2',
                         temp: '3',
-                        description: '4'
+                        description: '4',
+                        time: ''
                     },
                 created: function() {
                     this.fetchLocation();
@@ -46,6 +47,7 @@
                             vm.city = res.data.city;
                             vm.state = res.data.region;
                             vm.zip = res.data.zip;
+                            vm.time = new Date().toLocaleTimeString();
                         })
 						.then( function() {
                             //console.log("City" + this.city);
