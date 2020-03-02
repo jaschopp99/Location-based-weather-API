@@ -20,8 +20,8 @@
             <div class="container">
                 <p> You're located in {{ city }}, {{ state }}</p>
                 <p>Your zip code is {{ zip }}</p>
-                <p>The temperature is {{ temp }}</p>
-                <p>The weather is {{ description }}</p>
+                <p>The temperature is {{ temp }} °F</p>
+                <p>The weather description - {{ description }}</p>
                 <p id="ip"></p>
             </div>
         </div>
@@ -37,7 +37,6 @@
                     },
                 created: function() {
                     this.fetchLocation();
-                    this.fetchWeather();
                 },
                 methods: {
                     fetchLocation: function() {
@@ -47,23 +46,19 @@
                             vm.city = res.data.city;
                             vm.state = res.data.region;
                             vm.zip = res.data.zip;
-                            console.log(this.city);
+                        })
+						.then( function() {
+                            //console.log("City" + this.city);
+                            var apiKey="f7fe9a6460a1036a0a92e0b3fd643a78";
+                            var url="http://api.openweathermap.org/data/2.5/weather?q=" + vm.city + "&appid=" + apiKey;
+                            axios.get(url)
+                            .then( function (res) {
+
+                                vm.kelvin = ((res.data.main.temp - 273.15) * (9/5) + 32);
+                                vm.temp = this.vm.kelvin.toFixed(2)
+                                vm.description = res.data.weather[0].description;
+                            })
                         });
-
-                    }, 
-                    fetchWeather: function() {
-                      
-                        console.log("City" + this.city);
-                        //console.log("City" + this.city);
-                      /*  var apiKey="f7fe9a6460a1036a0a92e0b3fd643a78";
-                        var url="http://api.openweathermap.org/data/2.5/weather?q=" + this.city + "&appid=" + apiKey;
-                        axios.get(url)
-                        .then( function (res) {
-
-                            vm.temp = res.data.main.temp;
-                            vm.description = res.data.weather[0].description;
-
-                        });*/
                     }
                 }
             });
