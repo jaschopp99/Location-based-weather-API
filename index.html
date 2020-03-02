@@ -18,45 +18,57 @@
     <body>
         <div id="app">
             <div class="container">
-                <p> You're located in {{locationState}}</p>
+                <p> You're located in {{ city }}, {{ state }}</p>
+                <p>Your zip code is {{ zip }}</p>
+                <p>The temperature is {{ temp }}</p>
+                <p>The weather is {{ description }}</p>
                 <p id="ip"></p>
             </div>
         </div>
-        
         <script>
-            $.getJSON("https://api.ipify.org?format=json",function(data) { 
-            $("#ip").html(data.ip); 
-        }) 
             var vm = new Vue({
                 el: '#app',
                 data: {
-                        location: [],
+                        city: 'bhjbhj',
+                        zip: '1',
+                        state: '2',
+                        temp: '3',
+                        description: '4'
                     },
-                locationState: {
-                    locationState: function () {
-                        return this.region_code;
-                    }
+                created: function() {
+                    this.fetchLocation();
+                    this.fetchWeather();
                 },
-                    created: function() {
-                        this.fetchApod();
-                    },
-                    methods: {
-                        fetchApod: function() {
-                            var apiKey="72819806ac30a8d25d7833ae541987fa";
-                            var url="http://api.ipstack.com/"+ apiKey;
-                            //https://ipstack.com/documentation
-                            axios.get(url)
-                            .then( function(res) {
-                                console.clear();
-                                console.log(res);
-                                vm.location = res.data;
-                            });
+                methods: {
+                    fetchLocation: function() {
+                        var url="http://ip-api.com/json/";
+                        axios.get(url)
+                        .then( function(res) {
+                            vm.city = res.data.city;
+                            vm.state = res.data.region;
+                            vm.zip = res.data.zip;
+                            console.log(this.city);
+                        });
 
-                        }
+                    }, 
+                    fetchWeather: function() {
+                      
+                        console.log("City" + this.city);
+                        //console.log("City" + this.city);
+                      /*  var apiKey="f7fe9a6460a1036a0a92e0b3fd643a78";
+                        var url="http://api.openweathermap.org/data/2.5/weather?q=" + this.city + "&appid=" + apiKey;
+                        axios.get(url)
+                        .then( function (res) {
+
+                            vm.temp = res.data.main.temp;
+                            vm.description = res.data.weather[0].description;
+
+                        });*/
                     }
-                });
-                vm.fetchApod();
+                }
+            });
         </script>
+            
     </body>
 
 
