@@ -20,9 +20,22 @@
             <div class="container">
                 <p> You're located in {{ city }}, {{ state }}</p>
                 <p>Your zip code is {{ zip }}</p>
-                <p>The temperature is {{ temp }} °F</p>
-                <p>The weather description - {{ description }} <br>for {{ time }}</p>
-                <p id="ip"></p>
+                <p>Current Forecast for {{ month }} {{ day }}, {{ year }}
+                <br>The temperature is {{ temp }} °F <br>
+                The weather seems to be  <b>{{ description }}</b></p>
+                Future Forecasts
+                <ul id="app">
+                    <li>Upcoming Forecast for - {{ EO }}</li>
+                    <li>The temperature will be {{ EOtemp }} °F</li>
+                    <li>The weather looks like it will be <br> <b>{{ EOdescription }}</b></li>
+                </ul>
+
+                        
+                        
+                        
+                        
+                    </tr>
+                </table>
             </div>
         </div>
         <script>
@@ -34,7 +47,15 @@
                         state: '2',
                         temp: '3',
                         description: '4',
-                        time: ''
+                        time: '',
+                        month: '',
+                        day: '',
+                        day2: '',
+                        year: '',
+                        EO: '',
+                        EOtemp: '',
+                        EOdescription: '',
+                        unixTime: []
                     },
                 created: function() {
                     this.fetchLocation();
@@ -48,19 +69,79 @@
                             vm.state = res.data.region;
                             vm.zip = res.data.zip;
                             vm.time = new Date().toLocaleTimeString();
+                            var monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+                            var d = new Date();
+                            vm.month = monthNames[d.getMonth()];
+                            vm.day = d.getDate();
+                            vm.day2 = d.getDate() + 1;
+                            vm.year = d.getFullYear();
                         })
 						.then( function() {
                             //console.log("City" + this.city);
                             var apiKey="f7fe9a6460a1036a0a92e0b3fd643a78";
-                            var url="http://api.openweathermap.org/data/2.5/weather?q=" + vm.city + "&appid=" + apiKey;
+                            var url="http://api.openweathermap.org/data/2.5/weather?q=" + vm.city + "&units=imperial&appid=" + apiKey;
                             axios.get(url)
                             .then( function (res) {
-
-                                vm.kelvin = ((res.data.main.temp - 273.15) * (9/5) + 32);
-                                vm.temp = this.vm.kelvin.toFixed(2)
+                                vm.temp = res.data.main.temp
                                 vm.description = res.data.weather[0].description;
                             })
-                        });
+                        })/*
+                        .then( function() {
+                            var apiKey="f7fe9a6460a1036a0a92e0b3fd643a78";
+                            var url="http://api.openweathermap.org/data/2.5/forecast?q="+ vm.city + "&units=imperial&appid=" + apiKey;
+                            axios.get(url)
+                            .then(function (res) {
+                                var unixTime = res.data.list[0].dt;
+                                var date_ob = new Date(unixTime * 1000);
+                                var year = date_ob.getFullYear();
+                                var months = date_ob.getMonth();
+                                var day = (""+date_ob.getDate()).slice(-2);
+                                var hour = ("0" + date_ob.getHours()).slice(-2);
+                                var minute = ("0" + date_ob.getMinutes()).slice(-2);
+                                var monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                                var month = monthNames[months];
+                                var period = "AM";
+                                if (hour > 12){
+                                    hour = hour - 12;
+                                    period = "PM";
+                                }
+                                vm.EO = (""+month+" "+day+", "+year+"  "+hour+":"+minute + " " + period);
+                                vm.EOtemp = res.data.list[0].main.temp;
+                                vm.EOdescription = res.data.list[0].weather[0].description;
+                            })
+                            
+                        });*/
+                        .then(function() {
+                        var apiKey = "f7fe9a6460a1036a0a92e0b3fd643a78";
+                        fetch("http://api.openweathermap.org/data/2.5/forecast?q="+ vm.city + "&units=imperial&appid=" + apiKey)
+                        .then((resp) => resp.json()
+                        .then((data) => {
+                            for(var i =0;i<Object.keys(data.list[i]).length;i++)
+                            {
+                                let rest = data.list[i];
+                                var unixTime = rest.dt;
+                                console.log(unixTime);
+                                var date_ob = new Date(unixTime * 1000);
+                                var year = date_ob.getFullYear();
+                                var months = date_ob.getMonth();
+                                var day = (""+date_ob.getDate()).slice(-2);
+                                var hour = ("0" + date_ob.getHours()).slice(-2);
+                                var minute = ("0" + date_ob.getMinutes()).slice(-2);
+                                var monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                                var month = monthNames[months];
+                                var period = "AM";
+                                if (hour > 12){
+                                    hour = hour - 12;
+                                    period = "PM";
+                                }
+                                
+                                vm.EO = (""+month+" "+day+", "+year+"  "+hour+":"+minute + " " + period);
+                                vm.EOtemp = rest.main.temp;
+                                vm.EOdescription = rest.weather[0].description;
+                            }
+                        }));//
+                    })
                     }
                 }
             });
